@@ -56,5 +56,17 @@ namespace BackEnd_Interview.Controllers
 
             return Ok(_movieService.SetStatus(req));
         }
+
+        //[HttpGet("GetMovileIsLike{userId}")]
+        [HttpGet("GetMovileIsLike")]
+        public async Task<ActionResult<List<MoviesIsLiked>>> FindUserIsLikeMovie(int userId)
+        {
+            if (string.IsNullOrEmpty(userId.ToString()))
+            {
+                return BadRequest();
+            }
+
+            return Ok(_movieService.FindUserIsLikeMovie(userId));
+        }
     }
 }

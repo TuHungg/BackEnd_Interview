@@ -1,5 +1,8 @@
 ﻿using BackEnd_Interview.Dto;
 using BackEnd_Interview.Model;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace BackEnd_Interview.Services.MovieServices
 {
@@ -52,6 +55,46 @@ namespace BackEnd_Interview.Services.MovieServices
             var paged = _db.Movies.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
 
             return paged;
+        }
+
+
+        public async Task<List<MoviesIsLiked>> FindUserIsLikeMovie(int userID)
+        {
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                // STORE PROCEDURE: FindUserIsLikeMovie
+                var command = new SqlCommand("FindUserIsLikeMovie", connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@userId", userID);
+                var reader = command.ExecuteReader();
+
+                var moviesIsLike = new Dictionary<int, MoviesIsLiked>();
+
+                while (reader.Read())
+                {
+                    var movieId = reader.GetInt32(reader.GetOrdinal("MovieId"));
+
+                    if (!moviesIsLike.ContainsKey(movieId))
+                    {
+                        var movie = new MoviesIsLiked();
+                        movie.MovieId = movieId;
+                        movie.Title = reader.GetString(reader.GetOrdinal("Title"));
+                        movie.Url_Image = reader.GetString(reader.GetOrdinal("Url_Image"));
+                        movie.IsLiked = reader.GetBoolean(reader.GetOrdinal("IsLiked"));
+                        //movie.Movies = new List<UserMoviePreferences>();
+
+                        moviesIsLike.Add(movieId, movie);
+                    }
+                    //var ListMovie = await _db.Movies.SingleOrDefaultAsync(mv => mv.MovieId != movieId);
+                    //var ListMovieIsLike = new MoviesIsLiked();
+                    //ListMovieIsLike.Title = ListMovie.Title;
+                    //ListMovieIsLike.Url_Image = ListMovie.Url_Image;
+
+                    //moviesIsLike.Add(movieId, ListMovieIsLike);
+                }
+                return moviesIsLike.Values.ToList();
+            }
         }
     }
 }

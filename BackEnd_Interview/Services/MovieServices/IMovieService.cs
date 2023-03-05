@@ -10,5 +10,6 @@ namespace BackEnd_Interview.Services.MovieServices
         public List<Movie> CreateMovie(CreateMovieDto req);
 
         public List<Movie> GetMoviePage(int currentPage);
+        public Task<List<MoviesIsLiked>> FindUserIsLikeMovie(int userID);
     }
 }
