@@ -25,13 +25,13 @@ namespace BackEnd_Interview.Controllers
         }
 
         [HttpGet("getMoviePage")]
-        public async Task<ActionResult<List<Movie>>> GetMoviePage(int currentPage)
+        public async Task<ActionResult<List<MoviePages>>> GetMoviePage(int page = 1, int pageSize = 5)
         {
-            if (string.IsNullOrEmpty(currentPage.ToString()) || currentPage < 0)
+            if ((string.IsNullOrEmpty(page.ToString()) || page < 0) && (string.IsNullOrEmpty(pageSize.ToString()) || pageSize < 0))
             {
-                return BadRequest("CurrentPage greater than > 0");
+                return BadRequest("Current Page and pageSize greater than > 0");
             }
-            var paged = _movieService.GetMoviePage(currentPage);
+            var paged = _movieService.GetMoviePage(page, pageSize);
 
             return Ok(paged);
         }

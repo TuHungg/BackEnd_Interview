@@ -62,8 +62,6 @@ namespace BackEnd_Interview.Services.UserService
             account.UserName = req.UserName;
             account.Roles = 2000;
 
-
-
             // save account 
             _db.Users.Add(account);
             _db.SaveChanges();
@@ -95,8 +93,5 @@ namespace BackEnd_Interview.Services.UserService
 
             return jwt;
         }
-
-
-
     }
 }

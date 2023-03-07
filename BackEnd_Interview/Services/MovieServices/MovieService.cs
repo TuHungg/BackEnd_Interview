@@ -49,14 +49,23 @@ namespace BackEnd_Interview.Services.MovieServices
             return _db.Movies.ToList();
         }
 
-        public List<Movie> GetMoviePage(int currentPage)
+        public List<MoviePages> GetMoviePage(int page, int pageSize)
         {
-            var pageSize = 5;
-            var paged = _db.Movies.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
+            var ListMovie = new List<MoviePages>();
+            var dataMovie = _db.Movies;
 
-            return paged;
+            var paged = dataMovie.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            int totalMovie = dataMovie.Count() / pageSize;
+            if (paged == null)
+            {
+                return null;
+            }
+
+            ListMovie.Add(new MoviePages { Movies = paged, totalPage = totalMovie });
+
+            return ListMovie;
         }
-
 
         public async Task<List<MoviesIsLiked>> FindUserIsLikeMovie(int userID)
         {
